@@ -20,6 +20,7 @@ mongoose.connection.on("disconnection",()=>{
     console.log("mongoDb Disconnection")
 })
 
+
 app.use(express.json())
 
 app.use("/api/auth", authRoute)
@@ -28,7 +29,16 @@ app.use("/api/hotels", hotelsRoute)
 app.use("/api/rooms", roomsRoute)
 
 
-
+app.use((error,req,res,next)=>{
+  const errorStatus =error.status || 500
+  const errorMessage =error.message || "something error from wrong"
+  return res.status(errorStatus).json({
+    success:false,
+    status:errorStatus,
+    message:errorMessage,
+    stack:error.stack,
+  })
+})
 app.listen(8000,()=>{
     connect()
     console.log('connected to backend');
